@@ -1,32 +1,32 @@
 // Fake data
 var data = [
     {
-      year: 2000,
-      popularity: 50
+        date: "2020-01-01",
+        popularity: 50
     },
     {
-      year: 2001,
-      popularity: 150
+        date: "2020-02-01",
+        popularity: 150
     },
     {
-      year: 2002,
-      popularity: 200
+        date: "2020-03-01",
+        popularity: 200
     },
     {
-      year: 2003,
-      popularity: 130
+        date: "2020-03-01",
+        popularity: 250
     },
     {
-      year: 2004,
-      popularity: 240
+        date: "2020-04-01",
+        popularity: 200
     },
     {
-      year: 2005,
-      popularity: 380
+        date: "2020-05-01",
+        popularity: 250
     },
     {
-      year: 2006,
-      popularity: 420
+        date: "2020-06-01",
+        popularity: 350
     }
   ];
   
@@ -64,25 +64,41 @@ var data = [
       .scaleLinear()
       .range([height, 0])
       .domain([0, d3.max(data, dataPoint => dataPoint.popularity)]);
+
+
+    // Set Date Range
+    var earliestDate = new Date(data[0].date);
+    var lastDate = new Date(data[data.length-1].date);
+
+    console.log(earliestDate);
+    console.log(lastDate);
+
+    // Setting up date on the X axis
     const xScale = d3
       .scaleLinear()
       .range([0, width])
-      .domain(d3.extent(data, dataPoint => dataPoint.year));
+      .domain([earliestDate, lastDate]);
+
     return { yScale, xScale };
   }
   
   function createLine(xScale, yScale) {
+    console.log("Create Line");
+    console.log(xScale);
+
     return line = d3
     .line()
-    .x(dataPoint => xScale(dataPoint.year))
+    .x(dataPoint => xScale(new Date(dataPoint.date)))
     .y(dataPoint => yScale(dataPoint.popularity));
   }
   
   function updateAxes(data, chart, xScale, yScale) {
+
     chart
       .select(".x-axis")
       .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(xScale).ticks(data.length));
+      .call(d3.axisBottom(xScale).ticks(data.length).tickFormat(d3.timeFormat("%y-%m")));
+
     chart
       .select(".y-axis")
       .attr("transform", `translate(0, 0)`)
@@ -90,11 +106,17 @@ var data = [
   }
   
   function updatePath(data, line) {
+
+    console.log(data);
+    console.log(line);
+
     const updatedPath = d3
       .select("path")
       .interrupt()
       .datum(data)
       .attr("d", line);
+
+    console.log("HEre");
   
     const pathLength = updatedPath.node().getTotalLength();
     // D3 provides lots of transition options, have a play around here:
@@ -118,11 +140,11 @@ var data = [
   }
   
   updateChart(data);
-  // Update chart when button is clicked
-  d3.select("button").on("click", () => {
-    // Create new fake data
-    const newData = data.map(row => {
-      return { ...row, popularity: row.popularity * Math.random() };
-    });
-    updateChart(newData);
-  });
+//   // Update chart when button is clicked
+//   d3.select("button").on("click", () => {
+//     // Create new fake data
+//     const newData = data.map(row => {
+//       return { ...row, popularity: row.popularity * Math.random() };
+//     });
+//     updateChart(newData);
+//   });
