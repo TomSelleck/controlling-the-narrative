@@ -41,6 +41,7 @@ const margin = {
     left: 30,
     right: 20
 };
+
 const chart = svg.append("g").attr("transform", `translate(${margin.left},0)`);
 const width = +svg.attr("width") - margin.left - margin.right;
 const height = +svg.attr("height") - margin.top - margin.bottom;
@@ -69,24 +70,31 @@ function updateScales(data) {
         .range([height, 0])
         .domain([0, d3.max(data, dataPoint => dataPoint.popularity)]);
 
-
-    // Set Date Range
-    var earliestDate = new Date(data[0].date);
-    var lastDate = new Date(data[data.length - 1].date);
-
-    console.log(earliestDate);
-    console.log(lastDate);
+    // Setting up date on the X axis
+    var extent = d3.extent(data.map(_d=>new Date(_d.date)));
 
     // Setting up date on the X axis
     const xScale = d3
-        .scaleLinear()
+        .scaleTime()
         .range([0, width])
-        .domain([earliestDate, lastDate]);
+        .domain(extent);
 
     return {
         yScale,
         xScale
     };
+}
+
+function updateAxes(data, chart, xScale, yScale) {
+    chart
+        .select(".x-axis")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(xScale).ticks(data.length).tickFormat(d3.timeFormat("%y-%m")));
+
+    chart
+        .select(".y-axis")
+        .attr("transform", `translate(0, 0)`)
+        .call(d3.axisLeft(yScale));
 }
 
 function createLine(xScale, yScale) {
