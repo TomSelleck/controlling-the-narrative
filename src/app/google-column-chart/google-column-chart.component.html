@@ -1,0 +1,33 @@
+<google-chart
+width="width"
+height="height"
+[title]="title"
+[type]="type"
+[data]="drawData"
+[columns]="columns"
+[options]="options"
+(ready)="onReady()"
+(select)="onSelect($event)"
+(error)="onError($event)"
+(mouseenter)="onMouseEnter($event)"
+(mouseleave)="onMouseLeave($event)"
+>
+</google-chart>
+
+<mat-radio-group
+  [(ngModel)]="chosenData">
+  <mat-radio-button *ngFor="let dataOption of dataOptions" [value]="dataOption" (change)="dataChange($event)">
+    {{dataOption}}
+  </mat-radio-button>
+</mat-radio-group>
+
+
+<label id="example-radio-group-label">Time Granularity</label>
+<mat-radio-group
+    class="example-radio-group"
+  [(ngModel)]="chosenGranularity">
+  <mat-radio-button class="example-radio-button" *ngFor="let granularity of granularityOptions" [value]="granularity" (change)="granularityChange($event)">
+    {{granularity}}
+  </mat-radio-button>
+</mat-radio-group>
+
